@@ -5,3 +5,7 @@ The Node.js script and the context brokers run in docker containers which in tur
 
 To pull/create the images and start the containers simply run `./services create && ./services start` from the project root folder.
 To stop the containers run `./services stop`
+
+You can GET a list of all ParkingSpot entities via  
+`<docker_host>:1026/v2/entities?type=ParkingSpot&attrs=id&options=keyValues` (for Orion v2)  
+`<docker_host>:1027/ngsi-ld/v1/entities?type=ParkingSpot&attrs=id,name&options=keyValues` (for Orion LD)  
