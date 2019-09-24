@@ -1,0 +1,24 @@
+{
+  "name": "kiel-parksensors",
+  "version": "1.0.0",
+  "description": "Periodically queries states of parking spots on 'Kiellinie' in Kiel and imports transformed data both into FIWARE Orion v2 and FIWARE Orion LD context broker",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.19.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MS-Fiware/kiel-parksensors.git"
+  },
+  "author": "Michael Schulz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MS-Fiware/kiel-parksensors/issues"
+  },
+  "homepage": "https://github.com/MS-Fiware/kiel-parksensors#readme"
+}
+
