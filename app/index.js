@@ -2,20 +2,41 @@ const axios = require('axios');
 
 
 
-// base URL (park sensors data)
-const PARKSENSORS_BASE_URL = 'https://element-iot.com/api/v1/tags/stadt-kiel-parksensorik-kiellinie';
-// auth key (park sensors data)
-const PARKSENSORS_AUTH_KEY = '645a23ee6da141b6865fa68101c34ab7';
-// interval for querying park sensor states [seconds]
-const PARKSENSORS_QUERY_INTERVAL = 60;
+// environment variables read during runtime
+const {
+    // base URL (park sensors data source)
+    PARKSENSORS_BASE_URL,
+    // API key for authentication (park sensors data source)
+    PARKSENSORS_API_KEY,
+    // interval for querying park sensor states [seconds]
+    PARKSENSORS_QUERY_INTERVAL,
+
+    // NGSI v2 context broker URL
+    BROKER_V2_URL,
+    // API key for authentication (NGSI-V2 context broker)
+    BROKER_V2_API_KEY,
+    // tenant name on NGSI-V2 context broker (a tenant is a service aka domain on the context broker with its own isolated logical database)
+    BROKER_V2_TENANT,
+    // sub-tenant name on NGSI-V2 context broker (a sub-tenant is a sub-service / service path aka project for the given tenant)
+    BROKER_V2_SUBTENANT,
+    // entity ID suffix (on creation will be appended to an entitys ID for a customized identification format, e.g. the ID suffix 'XY' for a ParkingSpot entity 'parksensor-2b2f' will result in 'ParkingSpot:parksensor-2b2f-XY')
+    BROKER_V2_ENTITY_ID_SUFFIX,
+
+    // NGSI-LD context broker URL
+    BROKER_LD_URL,
+    // API key for authentication (NGSI-LD context broker)
+    BROKER_LD_API_KEY,
+    // tenant name on NGSI-LD context broker (a tenant is a service aka domain on the context broker with its own isolated logical database)
+    BROKER_LD_TENANT,
+    // sub-tenant name on NGSI-LD context broker (a sub-tenant is a sub-service / service path aka project for the given tenant)
+    BROKER_LD_SUBTENANT,
+    // entity ID suffix (on creation will be appended to an entitys ID for a customized identification format, e.g. the ID suffix 'XY' for a ParkingSpot entity 'parksensor-2b2f' will result in 'urn:ngsi-ld:ParkingSpot:parksensor-2b2f-XY')
+    BROKER_LD_ENTITY_ID_SUFFIX
+  } = process.env;
+
 // states of park sensors (specified by https://github.com/smart-data-models/dataModel.Parking/blob/master/ParkingSpot/doc/spec.md)
 const PARKSENSOR_STATES = { 0: 'free', 
                             1: 'occupied' };
-
-// NGSI v2 context broker URL
-const BROKER_V2_URL = 'http://orion-v2:1026';
-// NGSI-LD context broker URL
-const BROKER_LD_URL = 'http://orion-ld:1026';
 
 // context brokers
 const BROKERS = { v2: [BROKER_V2_URL], 
@@ -25,7 +46,7 @@ const BROKERS = { v2: [BROKER_V2_URL],
 
 // query park sensors states
 function readParksensors() {
-    let path = `/devices?last_readings=1&limit=100&auth=${PARKSENSORS_AUTH_KEY}`;
+    let path = `/devices?last_readings=1&limit=100&auth=${PARKSENSORS_API_KEY}`;
     return executeRestRequest('GET', PARKSENSORS_BASE_URL + path, {'Accept': 'application/json'}, null);
 }
 
@@ -34,7 +55,7 @@ function transformParksensor_NGSI_v2(sensor) {
     if (sensor) {
         let transformedSensor = {};
 
-        transformedSensor['id'] = 'ParkingSpot:' + sensor.slug;
+        transformedSensor['id'] = 'ParkingSpot:' + sensor.slug + ('-' + BROKER_V2_ENTITY_ID_SUFFIX || '');
         transformedSensor['name'] = {
             "type": 'Text',
             "value": sensor.name
@@ -75,7 +96,7 @@ function transformParksensor_NGSI_LDv1(sensor) {
     if (sensor) {
         let transformedSensor = {};
 
-        transformedSensor['id'] = 'urn:ngsi-ld:ParkingSpot:' + sensor.slug;
+        transformedSensor['id'] = 'urn:ngsi-ld:ParkingSpot:' + sensor.slug + ('-' + BROKER_LD_ENTITY_ID_SUFFIX || '');
         transformedSensor['name'] = {
             "type": 'Property',
             "value": sensor.name
@@ -110,42 +131,79 @@ function transformParksensor_NGSI_LDv1(sensor) {
     }
 }
 
+// set headers of a request to the NGSI v2 broker
+function setHeaders_CB_NGSI_v2(headers) {
+    headers = headers || {};
+
+    // set additional headers
+    if (BROKER_V2_API_KEY) {
+        headers['X-Api-Key'] = BROKER_V2_API_KEY;
+    }
+    if (BROKER_V2_TENANT) {
+        headers['Fiware-Service'] = BROKER_V2_TENANT;
+    }
+    if (BROKER_V2_SUBTENANT) {
+        headers['Fiware-Servicepath'] = BROKER_V2_SUBTENANT;
+    }
+
+    return headers;
+}
+
+// set headers of a request to the NGSI-LD broker
+function setHeaders_CB_NGSI_LDv1(headers) {
+    headers = headers || {};
+
+    // set additional headers
+    if (BROKER_LD_API_KEY) {
+        headers['X-Api-Key'] = BROKER_LD_API_KEY;
+    }
+    if (BROKER_LD_TENANT) {
+        headers['Fiware-Service'] = BROKER_LD_TENANT;
+    }
+    if (BROKER_LD_SUBTENANT) {
+        headers['Fiware-Servicepath'] = BROKER_LD_SUBTENANT;
+    }
+
+    return headers;
+}
+
 function getExistingParksensorIds_CB_NGSI_v2(baseUrl) {
     let path = '/v2/entities?type=ParkingSpot&attrs=id&options=keyValues';
-    return executeRestRequest('GET', baseUrl + path, 
-                                {'Accept': 'application/json'}, null);
+    let headers = setHeaders_CB_NGSI_v2({'Accept': 'application/json'});
+    return executeRestRequest('GET', baseUrl + path, headers, null);
 }
 
 function getExistingParksensorIds_CB_NGSI_LDv1(baseUrl) {
     // BUG?: trying to list all data entities limited to id attribute (attrs=id) returns an empty array, when providing another attribute (despite of 'type', e.g. attrs=id,name) a filled array is returned
     let path = '/ngsi-ld/v1/entities?type=ParkingSpot&attrs=id,name&options=keyValues';
-    return executeRestRequest('GET', baseUrl + path, 
-                                {'Accept': 'application/ld+json', 
-                                'Link': '<https://schema.lab.fiware.org/ld/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
-                                }, null);
+    let headers = setHeaders_CB_NGSI_LDv1({'Accept': 'application/ld+json', 
+                                            'Link': '<https://schema.lab.fiware.org/ld/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+                                        });
+    return executeRestRequest('GET', baseUrl + path, headers, null);
 }
 
 function postParksensors_CB_NGSI_v2(baseUrl, parkSensors) {
     let path = '/v2/op/update';
-    return executeRestRequest('POST', baseUrl + path, {'Content-Type': 'application/json'}, 
-            JSON.stringify({'actionType': 'append_strict', 'entities': parkSensors}));
+    let headers = setHeaders_CB_NGSI_v2({'Content-Type': 'application/json'});
+    return executeRestRequest('POST', baseUrl + path, headers, JSON.stringify({'actionType': 'append_strict', 'entities': parkSensors}));
 }
 
 function postParksensors_CB_NGSI_LDv1(baseUrl, parkSensors) {
     let path = '/ngsi-ld/v1/entities';
+    let headers = setHeaders_CB_NGSI_LDv1({'Content-Type': 'application/ld+json'});
     // post entities individually as batch operations are not implemented yet 
     // (status 12.09.2019, supposedly finished by Christmas this year)
     return Promise.all(parkSensors.map(sensor => {
-        return executeRestRequest('POST', baseUrl + path, {'Content-Type': 'application/ld+json'}, 
-                JSON.stringify(sensor));
+        return executeRestRequest('POST', baseUrl + path, headers, JSON.stringify(sensor));
     }));
 }
 
 function patchParksensors_CB_NGSI_v2(baseUrl, parkSensors) {
+    let headers = setHeaders_CB_NGSI_v2({'Content-Type': 'application/json'});
     return Promise.all(parkSensors.map(sensor => {
         if (sensor && sensor.id && sensor.status && sensor.status.metadata && sensor.status.metadata.timestamp) {
             let path = `/v2/entities/${sensor.id}/attrs`;
-            return executeRestRequest('PATCH', baseUrl + path, {'Content-Type': 'application/json'}, 
+            return executeRestRequest('PATCH', baseUrl + path, headers, 
                     JSON.stringify({
                         'status': {
                             'type': 'Text',
@@ -163,10 +221,11 @@ function patchParksensors_CB_NGSI_v2(baseUrl, parkSensors) {
 }
 
 function patchParksensors_CB_NGSI_LDv1(baseUrl, parkSensors) {
+    let headers = setHeaders_CB_NGSI_LDv1({'Content-Type': 'application/ld+json'});
     return Promise.all(parkSensors.map(sensor => {
         if (sensor && sensor.id && sensor.status) {
             let path = `/ngsi-ld/v1/entities/${sensor.id}/attrs`;
-            return executeRestRequest('PATCH', baseUrl + path, {'Content-Type': 'application/ld+json'}, 
+            return executeRestRequest('PATCH', baseUrl + path, headers, 
                     JSON.stringify({
                         '@context': 'https://schema.lab.fiware.org/ld/context',
                         'status': {
@@ -374,3 +433,4 @@ function executeRestRequest(method, url, headers, body) {
         });
     });
 }
+

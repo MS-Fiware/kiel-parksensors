@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+#  Command Line Interface to start the kiel-parksensors application service
+#
+#  For this tutorial the commands are merely a convenience script to run docker-compose
+#
+
+set -e
+
+if (( $# != 1 )); then
+	echo "Illegal number of parameters"
+	echo "usage: services-app-only [start|stop]"
+	exit 1
+fi
+
+stoppingContainers () {
+	echo "Stopping containers"
+	docker-compose -f docker-compose-app-only.yml --log-level ERROR -p fiware down -v --remove-orphans
+}
+
+displayServices () {
+	echo ""
+	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter name=kiel-parksensors-node
+	echo ""
+}
+
+command="$1"
+case "${command}" in
+	"help")
+		echo "usage: services-app-only [start|stop]"
+		;;
+	"start")
+		stoppingContainers
+		echo -e "Starting 1 container: a \033[1;95mkiel-parksensors\033[0m Node.Js app"
+		echo ""
+		docker-compose -f docker-compose-app-only.yml --log-level ERROR -p fiware up -d --remove-orphans
+		displayServices
+		;;
+	"stop")
+		stoppingContainers
+		;;
+	*)
+		echo "Command not Found."
+		echo "usage: services-app-only [start|stop]"
+		exit 127;
+		;;
+esac
