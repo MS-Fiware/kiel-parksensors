@@ -84,6 +84,8 @@ services:
     hostname: kiel-parksensors
     container_name: kiel-parksensors-node
     build: ./app
+    env_file:
+      - config.env
     networks:
       - default
     volumes:
