@@ -249,45 +249,47 @@ let importParksensorsInto_CB_NGSI_v2 = async function(parkSensors) {
     });
 
     for (const brokerUrl of BROKERS.v2) {
-        // IDs of park sensors that already exist in NGSI v2 broker
-        const existingIds = [];
-        // park sensors that already exist in NGSI v2 broker and need to be updated by new sensor data
-        const sensorsToPatch = [];
-        // park sensors that do not exist in NGSI v2 broker and need to be posted
-        const sensorsToPost = [];
-        // query existing park sensors in NGSI v2 broker
-        const response = await getExistingParksensorIds_CB_NGSI_v2(brokerUrl);
+        if (brokerUrl) {
+            // IDs of park sensors that already exist in NGSI v2 broker
+            const existingIds = [];
+            // park sensors that already exist in NGSI v2 broker and need to be updated by new sensor data
+            const sensorsToPatch = [];
+            // park sensors that do not exist in NGSI v2 broker and need to be posted
+            const sensorsToPost = [];
+            // query existing park sensors in NGSI v2 broker
+            const response = await getExistingParksensorIds_CB_NGSI_v2(brokerUrl);
 
-        //console.log(typeof response);
-        //console.log(JSON.stringify(response));
+            //console.log(typeof response);
+            //console.log(JSON.stringify(response));
 
-        if (response && response.data && Array.isArray(response.data)) {
-            response.data.forEach(sensor => {
-                existingIds.push(sensor.id);
-            });
-            transformedParksensors.forEach(tSensor => {
-                // transformed sensor already exists in NGSI v2 broker
-                if (existingIds.includes(tSensor.id)) {
-                    sensorsToPatch.push(tSensor);
-                } else {
-                    sensorsToPost.push(tSensor);
+            if (response && response.data && Array.isArray(response.data)) {
+                response.data.forEach(sensor => {
+                    existingIds.push(sensor.id);
+                });
+                transformedParksensors.forEach(tSensor => {
+                    // transformed sensor already exists in NGSI v2 broker
+                    if (existingIds.includes(tSensor.id)) {
+                        sensorsToPatch.push(tSensor);
+                    } else {
+                        sensorsToPost.push(tSensor);
+                    }
+                });
+
+                if (sensorsToPatch.length) {
+                    console.info('importParksensorsInto_CB_NGSI_v2 - INFO: UPDATING EXISTING park sensors in NGSI v2 broker =>');
+                    console.info(JSON.stringify(sensorsToPatch));
+                    // update existing park sensors objects in context broker
+                    patchParksensors_CB_NGSI_v2(brokerUrl, sensorsToPatch);
                 }
-            });
-
-            if (sensorsToPatch.length) {
-                console.info('importParksensorsInto_CB_NGSI_v2 - INFO: UPDATING EXISTING park sensors in NGSI v2 broker =>');
-                console.info(JSON.stringify(sensorsToPatch));
-                // update existing park sensors objects in context broker
-                patchParksensors_CB_NGSI_v2(brokerUrl, sensorsToPatch);
+                if (sensorsToPost.length) {
+                    console.info('importParksensorsInto_CB_NGSI_v2 - INFO: ADDING NEW park sensors to NGSI v2 broker =>');
+                    console.info(JSON.stringify(sensorsToPost));
+                    // add new park sensors objects to context broker
+                    postParksensors_CB_NGSI_v2(brokerUrl, sensorsToPost);
+                }
+            } else {
+                console.error('importParksensorsInto_CB_NGSI_v2 - ERROR: could not query existing park sensors in NGSI v2 broker');
             }
-            if (sensorsToPost.length) {
-                console.info('importParksensorsInto_CB_NGSI_v2 - INFO: ADDING NEW park sensors to NGSI v2 broker =>');
-                console.info(JSON.stringify(sensorsToPost));
-                // add new park sensors objects to context broker
-                postParksensors_CB_NGSI_v2(brokerUrl, sensorsToPost);
-            }
-        } else {
-            console.error('importParksensorsInto_CB_NGSI_v2 - ERROR: could not query existing park sensors in NGSI v2 broker');
         }
     };
 }
@@ -303,45 +305,47 @@ let importParksensorsInto_CB_NGSI_LDv1 = async function(parkSensors) {
     });
 
     for (const brokerUrl of BROKERS.ldv1) {
-        // IDs of park sensors that already exist in NGSI-LD broker
-        const existingIds = [];
-        // park sensors that already exist in NGSI-LD broker and need to be updated by new sensor data
-        const sensorsToPatch = [];
-        // park sensors that do not exist in NGSI-LD broker and need to be posted
-        const sensorsToPost = [];
-        // query existing park sensors in NGSI-LD broker
-        const response = await getExistingParksensorIds_CB_NGSI_LDv1(brokerUrl);
+        if (brokerUrl) {
+            // IDs of park sensors that already exist in NGSI-LD broker
+            const existingIds = [];
+            // park sensors that already exist in NGSI-LD broker and need to be updated by new sensor data
+            const sensorsToPatch = [];
+            // park sensors that do not exist in NGSI-LD broker and need to be posted
+            const sensorsToPost = [];
+            // query existing park sensors in NGSI-LD broker
+            const response = await getExistingParksensorIds_CB_NGSI_LDv1(brokerUrl);
 
-        //console.log(typeof response);
-        //console.log(JSON.stringify(response));
+            //console.log(typeof response);
+            //console.log(JSON.stringify(response));
 
-        if (response && response.data && Array.isArray(response.data)) {
-            response.data.forEach(sensor => {
-                existingIds.push(sensor.id);
-            });
-            transformedParksensors.forEach(tSensor => {
-                // transformed sensor already exists in NGSI-LD broker
-                if (existingIds.includes(tSensor.id)) {
-                    sensorsToPatch.push(tSensor);
-                } else {
-                    sensorsToPost.push(tSensor);
+            if (response && response.data && Array.isArray(response.data)) {
+                response.data.forEach(sensor => {
+                    existingIds.push(sensor.id);
+                });
+                transformedParksensors.forEach(tSensor => {
+                    // transformed sensor already exists in NGSI-LD broker
+                    if (existingIds.includes(tSensor.id)) {
+                        sensorsToPatch.push(tSensor);
+                    } else {
+                        sensorsToPost.push(tSensor);
+                    }
+                });
+
+                if (sensorsToPatch.length) {
+                    console.info('importParksensorsInto_CB_NGSI_LDv1 - INFO: UPDATING EXISTING park sensors in NGSI-LD broker =>');
+                    console.info(JSON.stringify(sensorsToPatch));
+                    // update existing park sensors objects in context broker
+                    patchParksensors_CB_NGSI_LDv1(brokerUrl, sensorsToPatch);
                 }
-            });
-
-            if (sensorsToPatch.length) {
-                console.info('importParksensorsInto_CB_NGSI_LDv1 - INFO: UPDATING EXISTING park sensors in NGSI-LD broker =>');
-                console.info(JSON.stringify(sensorsToPatch));
-                // update existing park sensors objects in context broker
-                patchParksensors_CB_NGSI_LDv1(brokerUrl, sensorsToPatch);
+                if (sensorsToPost.length) {
+                    console.info('importParksensorsInto_CB_NGSI_LDv1 - INFO: ADDING NEW park sensors to NGSI-LD broker =>');
+                    console.info(JSON.stringify(sensorsToPost));
+                    // add new park sensors objects to context broker
+                    postParksensors_CB_NGSI_LDv1(brokerUrl, sensorsToPost);
+                }
+            } else {
+                console.error('importParksensorsInto_CB_NGSI_LDv1 - ERROR: could not query existing park sensors in NGSI-LD broker');
             }
-            if (sensorsToPost.length) {
-                console.info('importParksensorsInto_CB_NGSI_LDv1 - INFO: ADDING NEW park sensors to NGSI-LD broker =>');
-                console.info(JSON.stringify(sensorsToPost));
-                // add new park sensors objects to context broker
-                postParksensors_CB_NGSI_LDv1(brokerUrl, sensorsToPost);
-            }
-        } else {
-            console.error('importParksensorsInto_CB_NGSI_LDv1 - ERROR: could not query existing park sensors in NGSI-LD broker');
         }
     };
 }
