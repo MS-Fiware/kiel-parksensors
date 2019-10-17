@@ -55,7 +55,7 @@ function transformParksensor_NGSI_v2(sensor) {
     if (sensor) {
         let transformedSensor = {};
 
-        transformedSensor['id'] = 'ParkingSpot:' + sensor.slug + ('-' + BROKER_V2_ENTITY_ID_SUFFIX || '');
+        transformedSensor['id'] = 'ParkingSpot:' + sensor.slug + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '');
         transformedSensor['name'] = {
             "type": 'Text',
             "value": sensor.name
@@ -96,7 +96,7 @@ function transformParksensor_NGSI_LDv1(sensor) {
     if (sensor) {
         let transformedSensor = {};
 
-        transformedSensor['id'] = 'urn:ngsi-ld:ParkingSpot:' + sensor.slug + ('-' + BROKER_LD_ENTITY_ID_SUFFIX || '');
+        transformedSensor['id'] = 'urn:ngsi-ld:ParkingSpot:' + sensor.slug + (BROKER_LD_ENTITY_ID_SUFFIX ? '-' + BROKER_LD_ENTITY_ID_SUFFIX : '');
         transformedSensor['name'] = {
             "type": 'Property',
             "value": sensor.name
