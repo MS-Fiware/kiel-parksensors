@@ -15,7 +15,7 @@ fi
 
 stoppingContainers () {
 	echo "Stopping containers"
-	docker-compose -f docker-compose-app-only.yml --log-level ERROR -p fiware down -v --remove-orphans
+	docker-compose -f docker-compose-app-only.yml --log-level ERROR -p kiel-parksensors down -v --remove-orphans
 }
 
 displayServices () {
@@ -33,7 +33,7 @@ case "${command}" in
 		stoppingContainers
 		echo -e "Starting 1 container: a \033[1;95mkiel-parksensors\033[0m Node.Js app"
 		echo ""
-		docker-compose -f docker-compose-app-only.yml --log-level ERROR -p fiware up -d --remove-orphans
+		docker-compose -f docker-compose-app-only.yml --log-level ERROR -p kiel-parksensors up -d --remove-orphans
 		displayServices
 		;;
 	"stop")

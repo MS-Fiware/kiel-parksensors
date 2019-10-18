@@ -27,16 +27,14 @@ services:
     env_file:
       - config.env
     networks:
-      - default
+      - main-network
     volumes:
       - ./app:/home/nodejs/kiel-parksensors
       - kiel-parksensors_node_modules:/home/nodejs/kiel-parksensors/node_modules
 
 networks:
-  default:
-    ipam:
-      config:
-        - subnet: 172.18.1.0/24
+  main-network:
+    driver: bridge
 
 volumes:
   kiel-parksensors_node_modules:

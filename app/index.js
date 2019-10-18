@@ -31,7 +31,12 @@ const {
     // sub-tenant name on NGSI-LD context broker (a sub-tenant is a sub-service / service path aka project for the given tenant)
     BROKER_LD_SUBTENANT,
     // entity ID suffix (on creation will be appended to an entitys ID for a customized identification format, e.g. the ID suffix 'XY' for a ParkingSpot entity 'parksensor-2b2f' will result in 'urn:ngsi-ld:ParkingSpot:parksensor-2b2f-XY')
-    BROKER_LD_ENTITY_ID_SUFFIX
+    BROKER_LD_ENTITY_ID_SUFFIX,
+
+    // enables storage of historic data (into Crate-DB via QuantumLeap API for now) - support for NGSI v2 data only
+    ENABLE_HISTORIC_DATA_STORAGE,
+    // QuantumLeap notification URL used for sending status changes of entities in the context broker
+    QL_V2_NOTIFICATION_URL
   } = process.env;
 
 // states of park sensors (specified by https://github.com/smart-data-models/dataModel.Parking/blob/master/ParkingSpot/doc/spec.md)
@@ -43,6 +48,58 @@ const BROKERS = { v2: [BROKER_V2_URL],
                   ldv1: [BROKER_LD_URL] };
 
 
+
+/**
+ * Executes a RESTful HTTP request
+ * @param {*} method 
+ * @param {*} url 
+ * @param {*} headers 
+ * @param {*} body 
+ */
+function executeRestRequest(method, url, headers, body) {
+    if (!axios) {
+        console.error('executeRestRequest - ERROR: axios library not found');
+    }
+    if (!method) {
+        console.error('executeRestRequest - ERROR: no HTTP method given');
+    }
+    if (!url) {
+        console.error('executeRestRequest - ERROR: no request URL given');
+    }
+
+    let requestConfig = {
+        method: method,
+        url: url,
+        headers: headers
+    };
+    if (method === 'PUT' || method === 'POST' || method === 'PATCH') {
+        requestConfig.data = body;
+    }
+
+    console.info(`\n==> trying to ${method}: '${url}'`);
+    console.info(`=> headers: ${JSON.stringify(headers)}`);
+    console.info(`=> body: ${JSON.stringify(body)}`);
+
+    return new Promise((resolve, reject) => {
+        axios.request(requestConfig)
+        .then(response => {
+            console.info('\n==> RESPONSE');
+            if (response.error) {
+                console.error(response);
+            } else {
+                console.info(`=> status code: ${response.status}`);
+                console.info(`=> status message: '${response.statusText}'`);
+                console.info(`=> headers: ${JSON.stringify(response.headers)}`);
+                console.info(`=> body:\n${JSON.stringify(response.data)}`);
+            }
+            resolve(response);
+        })
+        .catch(error => {
+            console.error(error);
+            reject(error);
+        });
+    });
+}
 
 // query park sensors states
 function readParksensors() {
@@ -182,7 +239,7 @@ function getExistingParksensorIds_CB_NGSI_LDv1(baseUrl) {
     return executeRestRequest('GET', baseUrl + path, headers, null);
 }
 
-function postParksensors_CB_NGSI_v2(baseUrl, parkSensors) {
+async function postParksensors_CB_NGSI_v2(baseUrl, parkSensors) {
     let path = '/v2/op/update';
     let headers = setHeaders_CB_NGSI_v2({'Content-Type': 'application/json'});
     return executeRestRequest('POST', baseUrl + path, headers, JSON.stringify({'actionType': 'append_strict', 'entities': parkSensors}));
@@ -196,6 +253,36 @@ function postParksensors_CB_NGSI_LDv1(baseUrl, parkSensors) {
     return Promise.all(parkSensors.map(sensor => {
         return executeRestRequest('POST', baseUrl + path, headers, JSON.stringify(sensor));
     }));
+}
+
+// subscribe for status changes of ParkingSpot entities in a NGSI v2 broker
+function subscribeParksensorsStatusChange_CB_NGSI_v2(baseUrl) {
+    let path = '/v2/subscriptions';
+    let headers = setHeaders_CB_NGSI_v2({'Content-Type': 'application/json'});
+
+    let subscription = {};
+
+    subscription['description'] = 'Notify QuantumLeap of status changes of any ParkingSpots' + (BROKER_V2_ENTITY_ID_SUFFIX ? ' with entity ID suffix: ' + BROKER_V2_ENTITY_ID_SUFFIX : '');
+    subscription['subject'] = {
+        "entities": [
+            {
+                "idPattern": 'ParkingSpot' + (BROKER_V2_ENTITY_ID_SUFFIX ? '.*-' + BROKER_V2_ENTITY_ID_SUFFIX.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '.*'),
+                "type": 'ParkingSpot'
+            }
+        ],
+        "condition": {
+            "attrs": ['status']
+        }
+    };
+    subscription['notification'] = {
+        "http": {
+            "url": QL_V2_NOTIFICATION_URL + '/v2/notify'
+        },
+        "metadata": ['dateCreated', 'dateModified']
+    };
+    subscription['throttling'] = 1;
+
+    return executeRestRequest('POST', baseUrl + path, headers, JSON.stringify(subscription));
 }
 
 function patchParksensors_CB_NGSI_v2(baseUrl, parkSensors) {
@@ -285,7 +372,11 @@ let importParksensorsInto_CB_NGSI_v2 = async function(parkSensors) {
                     console.info('importParksensorsInto_CB_NGSI_v2 - INFO: ADDING NEW park sensors to NGSI v2 broker =>');
                     console.info(JSON.stringify(sensorsToPost));
                     // add new park sensors objects to context broker
-                    postParksensors_CB_NGSI_v2(brokerUrl, sensorsToPost);
+                    await postParksensors_CB_NGSI_v2(brokerUrl, sensorsToPost);
+                    // subscribe for status changes of ParkingSpot entities in the context broker, if historic data persistence is enabled and notification URL is set
+                    if (ENABLE_HISTORIC_DATA_STORAGE && ENABLE_HISTORIC_DATA_STORAGE === 'true' && QL_V2_NOTIFICATION_URL) {
+                        subscribeParksensorsStatusChange_CB_NGSI_v2(brokerUrl);
+                    }
                 }
             } else {
                 console.error('importParksensorsInto_CB_NGSI_v2 - ERROR: could not query existing park sensors in NGSI v2 broker');
@@ -366,7 +457,7 @@ let importParksensorsIntoContextBrokers = async function(parkSensors) {
     }
 }
 
-async function start() {
+async function importSensorData() {
     try {
         const pSensorsResponse = await readParksensors();
 
@@ -374,67 +465,18 @@ async function start() {
             // import read park sensors into context brokers
         importParksensorsIntoContextBrokers(pSensorsResponse.data.body);
         } else {
-            console.warn('start - WARN: no park sensors data found for transforming');
+            console.warn('importSensorData - WARN: no park sensors data found for transforming');
         }
     } catch(err) {
         console.error(err);
     }
 }
 
-start();
-// keep querying / importing park sensor states every PARKSENSORS_QUERY_INTERVAL seconds
-setInterval(start, PARKSENSORS_QUERY_INTERVAL * 1000);
-
-
-/**
- * Executes a RESTful HTTP request
- * @param {*} method 
- * @param {*} url 
- * @param {*} headers 
- * @param {*} body 
- */
-function executeRestRequest(method, url, headers, body) {
-    if (!axios) {
-        console.error('executeRestRequest - ERROR: axios library not found');
-    }
-    if (!method) {
-        console.error('executeRestRequest - ERROR: no HTTP method given');
-    }
-    if (!url) {
-        console.error('executeRestRequest - ERROR: no request URL given');
-    }
-
-    let requestConfig = {
-        method: method,
-        url: url,
-        headers: headers
-    };
-    if (method === 'PUT' || method === 'POST' || method === 'PATCH') {
-        requestConfig.data = body;
-    }
-
-    console.info(`\n==> trying to ${method}: '${url}'`);
-    console.info(`=> headers: ${JSON.stringify(headers)}`);
-    console.info(`=> body: ${JSON.stringify(body)}`);
-
-    return new Promise((resolve, reject) => {
-        axios.request(requestConfig)
-        .then(response => {
-            console.info('\n==> RESPONSE');
-            if (response.error) {
-                console.error(response);
-            } else {
-                console.info(`=> status code: ${response.status}`);
-                console.info(`=> status message: '${response.statusText}'`);
-                console.info(`=> headers: ${JSON.stringify(response.headers)}`);
-                console.info(`=> body:\n${JSON.stringify(response.data)}`);
-            }
-            resolve(response);
-        })
-        .catch(error => {
-            console.error(error);
-            reject(error);
-        });
-    });
+function init() {
+    importSensorData();
+    // keep querying / importing park sensor states every PARKSENSORS_QUERY_INTERVAL seconds
+    setInterval(importSensorData, PARKSENSORS_QUERY_INTERVAL * 1000);
 }
+
+init();
 

@@ -26,7 +26,7 @@ services:
     depends_on:
       - mongo-db-v2
     networks:
-      - default
+      - main-network
     ports:
       - "1026:1026"
     command: -dbhost mongo-db-v2 -logLevel DEBUG -noCache
@@ -41,7 +41,7 @@ services:
     depends_on:
       - mongo-db-ld
     networks:
-      - default
+      - main-network
     ports:
       - "1027:1026"
     command: -dbhost mongo-db-ld -logLevel DEBUG
@@ -58,7 +58,7 @@ services:
     ports:
       - "27017:27017"
     networks:
-      - default
+      - main-network
     command: --nojournal
     volumes:
       - mongo-db-v2:/data
@@ -73,10 +73,42 @@ services:
     ports:
       - "27018:27017"
     networks:
-      - default
+      - main-network
     command: --nojournal
     volumes:
       - mongo-db-ld:/data
+
+  # Quantum Leap is persisting Short Term History to Crate-DB
+  quantumleap:
+    image: smartsdk/quantumleap:0.7.5
+    hostname: quantumleap
+    container_name: fiware-quantumleap
+    networks:
+      - main-network
+    ports:
+      - "8668:8668"
+    depends_on:
+      - crate-db
+    environment:
+      - CRATE_HOST=crate-db
+    healthcheck:
+      test: curl --fail -s http://quantumleap:8668/v2/version || exit 1
+
+  # Crate-DB for holding time-series / history data
+  crate-db:
+    image: crate:3.3.5
+    hostname: crate-db
+    container_name: db-crate
+    networks:
+      - main-network
+    ports:
+      # Admin UI
+      - "4200:4200"
+      # Transport protocol
+      - "4300:4300"
+    command: crate -Clicense.enterprise=false -Cauth.host_based.enabled=false  -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
+    volumes:
+      - crate-db:/data
 
   # Kiel Parksensors Node.Js App
   kiel-parksensors:
@@ -87,16 +119,14 @@ services:
     env_file:
       - config.env
     networks:
-      - default
+      - main-network
     volumes:
       - ./app:/home/nodejs/kiel-parksensors
       - kiel-parksensors_node_modules:/home/nodejs/kiel-parksensors/node_modules
 
 networks:
-  default:
-    ipam:
-      config:
-        - subnet: 172.18.1.0/24
+  main-network:
+    driver: bridge
 
 volumes:
   mongo-db-v2: 
