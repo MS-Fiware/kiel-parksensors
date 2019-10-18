@@ -20,7 +20,7 @@ stoppingContainers () {
 
 displayServices () {
 	echo ""
-	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter name=kiel-parksensors-node
+	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter name=kielparking-*
 	echo ""
 }
 
@@ -31,7 +31,8 @@ case "${command}" in
 		;;
 	"start")
 		stoppingContainers
-		echo -e "Starting 1 container: a \033[1;95mkiel-parksensors\033[0m Node.Js app"
+		echo -e "Starting 1 container:"
+		echo -e "a \033[1;95mkiel-parksensors\033[0m Node.Js app"
 		echo ""
 		docker-compose -f docker-compose-app-only.yml --log-level ERROR -p kiel-parksensors up -d --remove-orphans
 		displayServices
