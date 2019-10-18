@@ -131,4 +131,5 @@ networks:
 volumes:
   mongo-db-v2: 
   mongo-db-ld:
+  crate-db:
   kiel-parksensors_node_modules:
