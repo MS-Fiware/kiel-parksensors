@@ -22,7 +22,7 @@ services:
   kiel-parksensors:
     image: kiel-parksensors-node
     hostname: kiel-parksensors
-    container_name: kiel-parksensors-node
+    container_name: kipark-kiel-parksensors-node
     build: ./app
     env_file:
       - config.env
