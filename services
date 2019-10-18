@@ -31,7 +31,13 @@ case "${command}" in
 		;;
 	"start")
 		stoppingContainers
-		echo -e "Starting 5 containers: a \033[1;34mOrion v2\033[0m, a \033[1;34mOrion LD\033[0m, two \033[1;30mMongoDB\033[0m databases and a \033[1;95mkiel-parksensors\033[0m Node.Js app"
+		echo -e "Starting 7 containers:"
+		echo -e "a \033[1;34mOrion v2\033[0m"
+		echo -e "a \033[1;34mOrion LD\033[0m"
+		echo -e "two \033[1;30mMongoDB\033[0m databases"
+		echo -e "a \033[1;93mQuantumLeap API\033[0m"
+		echo -e "a \033[1;90mCrate-DB\033[0m"
+		echo -e "and a \033[1;95mkiel-parksensors\033[0m Node.Js app"
 		echo -e "- the \033[1;34mOrion\033[0ms are the context brokers"
 		echo ""
 		docker-compose --log-level ERROR -p kiel-parksensors up -d --remove-orphans
@@ -41,12 +47,16 @@ case "${command}" in
 		stoppingContainers
 		;;
 	"create")
-		echo "Obtaining Mongo DB image"
+		echo "Obtaining Mongo DB v3.6 Image"
 		docker pull mongo:3.6
                 echo "Obtaining Orion v2.2.0 Image"
                 docker pull fiware/orion:2.2.0
 		echo "Obtaining Latest Orion LD Image"
 		docker pull fiware/orion-ld
+		echo "Obtaining QuantumLeap v0.7.5 Image"
+		docker pull smartsdk/quantumleap:0.7.5
+		echo "Obtaining Crate-DB v3.3.5 Image"
+		docker pull crate:3.3.5
 		;;
 	*)
 		echo "Command not Found."
