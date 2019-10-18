@@ -22,7 +22,7 @@ services:
   orion-v2:
     image: fiware/orion:2.2.0
     hostname: orion-v2
-    container_name: fiware-orion-v2
+    container_name: kipark-orion-v2
     depends_on:
       - mongo-db-v2
     networks:
@@ -37,7 +37,7 @@ services:
   orion-ld:
     image: fiware/orion-ld
     hostname: orion-ld
-    container_name: fiware-orion-ld
+    container_name: kipark-orion-ld
     depends_on:
       - mongo-db-ld
     networks:
@@ -52,7 +52,7 @@ services:
   mongo-db-v2:
     image: mongo:3.6
     hostname: mongo-db-v2
-    container_name: db-mongo-v2
+    container_name: kipark-db-mongo-v2
     expose:
       - "27017"
     ports:
@@ -67,7 +67,7 @@ services:
   mongo-db-ld:
     image: mongo:3.6
     hostname: mongo-db-ld
-    container_name: db-mongo-ld
+    container_name: kipark-db-mongo-ld
     expose:
       - "27018"
     ports:
@@ -82,7 +82,7 @@ services:
   quantumleap:
     image: smartsdk/quantumleap:0.7.5
     hostname: quantumleap
-    container_name: fiware-quantumleap
+    container_name: kipark-quantumleap
     networks:
       - main-network
     ports:
@@ -98,7 +98,7 @@ services:
   crate-db:
     image: crate:3.3.5
     hostname: crate-db
-    container_name: db-crate
+    container_name: kipark-db-crate
     networks:
       - main-network
     ports:
@@ -114,7 +114,7 @@ services:
   kiel-parksensors:
     image: kiel-parksensors-node
     hostname: kiel-parksensors
-    container_name: kiel-parksensors-node
+    container_name: kipark-kiel-parksensors-node
     build: ./app
     env_file:
       - config.env
