@@ -20,7 +20,7 @@ stoppingContainers () {
 
 displayServices () {
 	echo ""
-	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter name=kielparking-*
+	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter name=kipark-*
 	echo ""
 }
 
