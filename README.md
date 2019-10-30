@@ -12,9 +12,11 @@ The Node.js script and the context brokers run in separated Docker containers wh
 ## Content
 
 -   [Prerequisites](#prerequisites)
--   [Operation modes](#Operation modes)
+-   [Operation modes](#operation-modes)
 -   [Configuration](#configuration)
--   [Starting Docker containers](#starting_docker_containers)
+-   [Starting Docker containers](#starting-docker-containers)
+-   [Reading data from context brokers](#reading-data-from-context-brokers)
+-   [History data](#history-data)
 
 ## Prerequisites ##
 
