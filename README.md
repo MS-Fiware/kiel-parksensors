@@ -16,13 +16,13 @@ The Node.js script and the context brokers run in separated Docker containers wh
 
 ## Operation modes ##
 
-The project offers two different compose files. The first variant starts the Node.js script, both versions of the context brokers and components for persisting parking status data. In this mode (client-server mode), the retrieved parking data is stored in the context brokers of the local Docker containers and, if configured, persisted in the local CrateDB instance.
+The project offers two different compose files. The first variant starts the Node.js script, both versions of the context brokers and components for persisting parking status data. In this mode (client-server mode), the retrieved parking data is stored in the context brokers of the local Docker containers and, if configured, persisted in the local CrateDB instance.<br><br>
 The second variant comprises a single service for the Node.js script. It acts as a client to context brokers running elsewhere (client mode).
 
 ## Starting Docker containers ##
 
-To pull/create the images and start the containers simply run `./services create && ./services start` (client-server mode) or `./services-app-only start` (client mode) from the project root folder.
-To stop the containers run `./services[-app-only] stop`.   
+To pull/create the images and start the containers simply run `./services create && ./services start` (client-server mode) or `./services-app-only start` (client mode) from the project root folder.<br>
+To stop the containers run `./services[-app-only] stop`.<br>
 If you encounter problems executing the script, add the missing permission with `chmod +x services*`.
 
 ## Reading data from context brokers ##
