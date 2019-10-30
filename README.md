@@ -7,7 +7,7 @@
 
 Node.js script that periodically queries states of parking spots on "Kiellinie" in Kiel and imports transformed data both into [FIWARE Orion v2](https://github.com/telefonicaid/fiware-orion) and [FIWARE Orion-LD](https://github.com/FIWARE/context.Orion-LD) context broker. Optional storage of NGSI v2 time series data in a [CrateDB](https://crate.io/) via [QuantumLeap API](https://github.com/smartsdk/ngsi-timeseries-api) is also supported.  
 
-The Node.js script and the context brokers run in separated Docker containers which in turn are composed within the included docker-compose.yml.
+The Node.js script and the context brokers run in separated Docker containers which in turn are composed within the included Docker Compose files.
 
 
 ## Prerequisites ##
