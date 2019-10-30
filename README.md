@@ -110,4 +110,4 @@ sudo sysctl -w vm.max_map_count=262144
 
 ## License ##
 
-This project is licensed under [MIT license](./LICENSE).
+This project is licensed under [MIT License](./LICENSE).
