@@ -19,6 +19,16 @@ The Node.js script and the context brokers run in separated Docker containers wh
 The project offers two different compose files. The first variant starts the Node.js script, both versions of the context brokers and components for persisting parking status data. In this mode (client-server mode), the retrieved parking data is stored in the context brokers of the local Docker containers and, if configured, persisted in the local CrateDB instance.<br><br>
 The second variant comprises a single service for the Node.js script. It acts as a client to context brokers running elsewhere (client mode).
 
+## Configuration ##
+
+ToDo (config.env + CrateDB memory map size fix)
+
+Set maximum number of memory map areas by increasing the `max_map_count` value:
+
+``` bash
+sudo sysctl -w vm.max_map_count=262144
+```
+
 ## Starting Docker containers ##
 
 To pull/create the images and start the containers simply run `./services create && ./services start` (client-server mode) or `./services-app-only start` (client mode) from the project root folder.<br>
@@ -27,7 +37,8 @@ If you encounter problems executing the script, add the missing permission with 
 
 ## Reading data from context brokers ##
 
-You can GET a list of all ParkingSpot entities using the following cURL commands. Don't forget to replace the `<DOCKER_HOST>` placeholders with the hostname / IP of your Docker host.  
+You can GET a list of all ParkingSpot entities using the following cURL commands. Don't forget to replace the `<DOCKER_HOST>` placeholders with the hostname / IP of your Docker host.<br>
+`<DOCKER_HOST>` assumes that you are running your own context brokers on the Docker host. If you are connecting to context brokers located elsewhere, use their hostname / IP address accordingly.
 
 ### Orion v2 ###
 List all ParkingSpot entities containing only the 'id' attribute:  
@@ -60,3 +71,8 @@ curl -X GET '<DOCKER_HOST>:1027/ngsi-ld/v1/entities?type=ParkingSpot&options=key
   -H 'Accept: application/ld+json' \
   -H 'Link: <https://schema.lab.fiware.org/ld/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
 ```
+
+## History data ##
+
+ToDo (CrateDB)
+
