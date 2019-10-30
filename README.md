@@ -18,6 +18,7 @@ The Node.js script and the context brokers run in separated Docker containers wh
 -   [Reading data from context brokers](#reading-data-from-context-brokers)
 -   [History data](#history-data)
 -   [Troubleshooting](#troubleshooting)
+-   [License](#license)
 
 ## Prerequisites ##
 
@@ -106,3 +107,7 @@ In order to avoid this, increase maximum number of memory map areas before start
 sudo sysctl -w vm.max_map_count=262144
 ```
 
+
+## License ##
+
+This project is licensed under [MIT license](./LICENSE).
