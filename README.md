@@ -12,7 +12,7 @@ The Node.js script and the context brokers run in separated Docker containers wh
 
 ## Prerequisites ##
 
-[Docker](https://www.docker.com/) and [Docker Compose](https://github.com/docker/compose) must be installed on your system in order to run the services defined in the multi-container file. It has been tested with Docker version 18.09.7, build 2d0083d and docker-compose version 1.23.1, build b02f1306
+[Docker](https://www.docker.com/) and [Docker Compose](https://github.com/docker/compose) must be installed on your system in order to run the services defined in the multi-container file. Tests have been made with Docker version 18.09.7, build 2d0083d and docker-compose version 1.23.1, build b02f1306
 
 ## Operation modes ##
 
