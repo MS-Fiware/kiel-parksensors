@@ -9,6 +9,12 @@ Node.js script that periodically queries states of parking spots on "Kiellinie" 
 
 The Node.js script and the context brokers run in separated Docker containers which in turn are composed within the included Docker Compose files.
 
+## Content
+
+-   [Prerequisites](#prerequisites)
+-   [Operation modes](#operation_modes)
+-   [Configuration](#configuration)
+-   [Starting Docker containers](#starting_docker_containers)
 
 ## Prerequisites ##
 
