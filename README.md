@@ -26,7 +26,9 @@ The Node.js script and the context brokers run in separated Docker containers wh
 
 ## Operation modes ##
 
-The project offers two different compose files. The first variant starts the Node.js script, both versions of the context brokers and components for persisting parking status data. In this mode (client-server mode), the retrieved parking data is stored in the context brokers of the local Docker containers and, if configured, persisted in the local CrateDB instance. The second variant comprises a single service for the Node.js script. It acts as a client to context brokers running elsewhere (client mode).
+The project offers two different compose files. The first variant starts the Node.js script, both versions of the context brokers and components for persisting parking status data. In this mode (client-server mode), the retrieved parking data is stored in the context brokers of the local Docker containers and, if configured, persisted in the local CrateDB instance.<br><br>
+
+The second variant comprises a single service for the Node.js script. It acts as a client to context brokers running elsewhere (client mode).
 
 
 ## Configuration ##
