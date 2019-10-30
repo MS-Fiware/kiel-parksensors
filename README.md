@@ -17,6 +17,7 @@ The Node.js script and the context brokers run in separated Docker containers wh
 -   [Starting Docker containers](#starting-docker-containers)
 -   [Reading data from context brokers](#reading-data-from-context-brokers)
 -   [History data](#history-data)
+-   [Troubleshooting](#troubleshooting)
 
 ## Prerequisites ##
 
@@ -26,25 +27,20 @@ The Node.js script and the context brokers run in separated Docker containers wh
 ## Operation modes ##
 
 The project offers two different compose files. The first variant starts the Node.js script, both versions of the context brokers and components for persisting parking status data. In this mode (client-server mode), the retrieved parking data is stored in the context brokers of the local Docker containers and, if configured, persisted in the local CrateDB instance.<br><br>
+
 The second variant comprises a single service for the Node.js script. It acts as a client to context brokers running elsewhere (client mode).
 
 
 ## Configuration ##
 
-ToDo (config.env + CrateDB memory map size fix)
-
-Set maximum number of memory map areas by increasing the `max_map_count` value:
-
-``` bash
-sudo sysctl -w vm.max_map_count=262144
-```
+ToDo (config.env)
 
 
 ## Starting Docker containers ##
 
-To pull/create the images and start the containers simply run `./services create && ./services start` (client-server mode) or `./services-app-only start` (client mode) from the project root folder.<br>
+Depending on what operation mode is preferred, pull/create the images and start containers by running `./services create && ./services start` (client-server mode) or simply `./services-app-only start` (client mode) from the project root folder.<br>
 To stop the containers run `./services[-app-only] stop`.<br>
-If you encounter problems executing the script, add the missing permission with `chmod +x services*`.
+If you encounter problems executing the service scripts, add the missing permission with `chmod +x services*`.
 
 
 ## Reading data from context brokers ##
@@ -90,4 +86,23 @@ curl -X GET '<DOCKER_HOST>:1027/ngsi-ld/v1/entities?type=ParkingSpot&options=key
 ## History data ##
 
 ToDo (CrateDB)
+
+
+## Troubleshooting ##
+
+CrateDB service might crash shortly after startup due to incompatible memory settings.<br>
+With `docker ps -a` you can check whether its container is running or has already exited. In the latter case, inspecting the container log file with 
+
+``` bash
+sudo vi `docker inspect --format='{{.LogPath}}' kipark-db-crate`
+```
+
+should give you an output saying something like<br>
+`max virtual memory areas vm.max_map_count [65530] likely too low, increase to at least [262144]`.<br><br>
+
+In order to avoid this, increase maximum number of memory map areas before starting:
+
+``` bash
+sudo sysctl -w vm.max_map_count=262144
+```
 
