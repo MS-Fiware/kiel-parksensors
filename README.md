@@ -34,7 +34,215 @@ The second variant comprises a single service for the Node.js script. It acts as
 
 ## Configuration ##
 
-ToDo (config.env)
+There is a configuration file `config.env` containing environment variables used by the Node.js script. Some of the variables values have to be modified prior to initial startup, as the script uses those variables for connection management and data processing.<br>
+
+The following list gives a summary of currently supported variables and their description:
+
+<table>
+  <tbody>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Default value</th>
+    </tr>
+    <tr>
+      <th colspan="3">Park Sensors Data Source</th>
+    </tr>
+    <tr>
+      <td>
+        <code>PARKSENSORS_BASE_URL</code>
+      </td>
+      <td>
+        <p>base URL (park sensors data source)</p>
+        <p><i>mandatory</i></p>
+      </td>
+      <td>
+         https://element-iot.com/api/v1/tags/stadt-kiel-parksensorik-kiellinie
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>PARKSENSORS_API_KEY</code>
+      </td>
+      <td>
+        <p>API key (token for authenticaton)</p>
+        <p><i>mandatory</i></p>
+      </td>
+      <td>
+        645a23ee6da141b6865fa68101c34ab7
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>PARKSENSORS_QUERY_INTERVAL</code>
+      </td>
+      <td>
+        <p>interval for querying park sensor states [seconds]</p>
+        <p><i>mandatory</i></p>
+      </td>
+      <td>
+        60
+      </td>
+    </tr>
+    <tr>
+      <th colspan="3">NGSI v2 Context Broker</th>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_V2_URL</code>
+      </td>
+      <td>
+        <p>NGSI v2 context broker URL</p>
+        <p>NOTE: modify ONLY, when communicating with external context brokers, e.g. when executing <code>'./services-app-only'</code> which does NOT start any context broker!<br>
+          If this broker should not be used, just set an empty value.</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        http://orion-v2:1026
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_V2_API_KEY</code>
+      </td>
+      <td>
+        <p>API key (token for authenticaton)</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_V2_TENANT</code>
+      </td>
+      <td>
+        <p>tenant name (a tenant is a service aka domain on the context broker with its own isolated logical database)</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        kiel
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_V2_SUBTENANT</code>
+      </td>
+      <td>
+        <p>sub-tenant name (a sub-tenant is a sub-service / service path aka project for the given tenant)</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        /parkingspots
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_V2_ENTITY_ID_SUFFIX</code>
+      </td>
+      <td>
+        <p>entity ID suffix (on creation will be appended to an entitys ID for a customized identification format, e.g. the ID suffix 'XY' for a ParkingSpot entity 'parksensor-2b2f' will result in 'ParkingSpot:parksensor-2b2f-XY')</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        XY
+      </td>
+    </tr>
+    <tr>
+      <th colspan="3">NGSI-LD Context Broker</th>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_LD_URL</code>
+      </td>
+      <td>
+        <p>NGSI-LD context broker URL</p>
+        <p>NOTE: modify ONLY, when communicating with external context brokers, e.g. when executing <code>'./services-app-only'</code> which does NOT start any context broker!<br>
+          If this broker should not be used, just set an empty value.</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        http://orion-ld:1026
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_LD_API_KEY</code>
+      </td>
+      <td>
+        <p>API key (token for authenticaton)</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_LD_TENANT</code>
+      </td>
+      <td>
+        <p>tenant name (a tenant is a service aka domain on the context broker with its own isolated logical database)</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        kiel
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_LD_SUBTENANT</code>
+      </td>
+      <td>
+        <p>sub-tenant name (a sub-tenant is a sub-service / service path aka project for the given tenant)</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        /parkingspots
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_LD_ENTITY_ID_SUFFIX</code>
+      </td>
+      <td>
+        <p>entity ID suffix (on creation will be appended to an entitys ID for a customized identification format, e.g. the ID suffix 'XY' for a ParkingSpot entity 'parksensor-2b2f' will result in 'urn:ngsi-ld:ParkingSpot:parksensor-2b2f-XY')</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        XY
+      </td>
+    </tr>
+    <tr>
+      <th colspan="3">Historic data persistence</th>
+    </tr>
+    <tr>
+      <td>
+        <code>ENABLE_HISTORIC_DATA_STORAGE</code>
+      </td>
+      <td>
+        <p>enables storage of historic data (into Crate-DB via QuantumLeap API for now) - support for NGSI v2 data only</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        true
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>QL_V2_NOTIFICATION_URL</code>
+      </td>
+      <td>
+        <p>QuantumLeap (QL) notification URL used for sending status changes of entities in the context broker</p>
+        <p>NOTE: modify ONLY, when communicating with external QL instances, e.g. when executing <code>'./services-app-only'</code> which does NOT start any QL instance!<br>
+          If historic data persistence via QL is not wanted, just set an empty value.</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        http://quantumleap:8668
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 ## Starting Docker containers ##
