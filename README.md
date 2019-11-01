@@ -294,7 +294,12 @@ curl -X GET '<DOCKER_HOST>:1027/ngsi-ld/v1/entities?type=ParkingSpot&options=key
 
 ## History data ##
 
-ToDo (CrateDB)
+If historic data persistence was enabled, the Node.js script sends subscriptions for status changes of all known ParkingSpot entities to the NGSI v2 context broker. QuantumLeap, a REST service for storing, querying and retrieving spatial-temporal data, will receive a notification every time a status changes and stores its current value in a CrateDB database. With this data collected over time, statistical evaluations and data visualisation will be possible, e.g. building histograms with [Grafana](https://grafana.com/) or UI widgets using [WireCloud](https://github.com/Wirecloud/wirecloud).<br>
+
+As QuantumLeap has no support for NGSI-LD yet, storage of historic data is supported for NGSI v2 data only.<br>
+
+The Docker container of CrateDB exposes 4200 as the default port for data queries and access to the web-based admin UI.<br>
+You can reach it at <DOCKER_HOST>:4200
 
 
 ## Troubleshooting ##
