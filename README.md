@@ -299,7 +299,7 @@ If historic data persistence was enabled, the Node.js script sends subscriptions
 As QuantumLeap has no support for NGSI-LD yet, storage of historic data is supported for NGSI v2 data only.<br>
 
 The Docker container of CrateDB exposes 4200 as the default port for data queries and access to the web-based admin UI.<br>
-You can reach it at <DOCKER_HOST>:4200
+You can reach it at `<DOCKER_HOST>:4200`.
 
 
 ## Troubleshooting ##
