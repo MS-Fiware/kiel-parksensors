@@ -38,7 +38,14 @@ setTimeout(() => {
         // enables storage of historic data (into Crate-DB via QuantumLeap API for now) - support for NGSI v2 data only
         ENABLE_HISTORIC_DATA_STORAGE,
         // QuantumLeap notification URL used for sending status changes of entities in the context broker
-        QL_V2_NOTIFICATION_URL
+        QL_V2_NOTIFICATION_URL,
+        // API key for authentication (QuantumLeap)
+        QL_V2_API_KEY,
+        // tenant name on QuantumLeap
+        QL_V2_TENANT,
+        // sub-tenant name on QuantumLeap
+        QL_V2_SUBTENANT
+
       } = process.env;
 
     // states of park sensors (specified by https://github.com/smart-data-models/dataModel.Parking/blob/master/ParkingSpot/doc/spec.md)
@@ -226,6 +233,24 @@ setTimeout(() => {
         return headers;
     }
 
+    // set headers of a notification request to the QuantumLeap
+    function setHeaders_QL_NGSI_v2(headers) {
+        headers = headers || {};
+
+        // set additional headers
+        if (BROKER_V2_API_KEY) {
+            headers['X-Api-Key'] = QL_V2_API_KEY;
+        }
+        if (BROKER_V2_TENANT) {
+            headers['Fiware-Service'] = QL_V2_TENANT;
+        }
+        if (BROKER_V2_SUBTENANT) {
+            headers['Fiware-Servicepath'] = QL_V2_SUBTENANT;
+        }
+
+        return headers;
+    }
+
     function getExistingParksensorIds_CB_NGSI_v2(baseUrl) {
         let path = '/v2/entities?type=ParkingSpot&attrs=id&options=keyValues';
         let headers = setHeaders_CB_NGSI_v2({'Accept': 'application/json'});
@@ -261,9 +286,10 @@ setTimeout(() => {
     function subscribeParksensorsStatusChange_CB_NGSI_v2(baseUrl) {
         let path = '/v2/subscriptions';
         let headers = setHeaders_CB_NGSI_v2({'Content-Type': 'application/json'});
-
+        let notificationRequestHeaders = setHeaders_QL_NGSI_v2();
+        
         let subscription = {};
-
+        
         subscription['description'] = 'Notify QuantumLeap of status changes of any ParkingSpots' + (BROKER_V2_ENTITY_ID_SUFFIX ? ' with entity ID suffix: ' + BROKER_V2_ENTITY_ID_SUFFIX : '');
         subscription['subject'] = {
             "entities": [
@@ -277,10 +303,11 @@ setTimeout(() => {
             }
         };
         subscription['notification'] = {
-            "http": {
-                "url": QL_V2_NOTIFICATION_URL + '/v2/notify'
-            },
-            "metadata": ['dateCreated', 'dateModified']
+			"httpCustom": {
+				"url": QL_V2_NOTIFICATION_URL + '/v2/notify',
+				"headers": notificationRequestHeaders
+			},
+			"metadata": ['dateCreated', 'dateModified']
         };
         subscription['throttling'] = 1;
 
@@ -482,4 +509,3 @@ setTimeout(() => {
 
     init();
 }, 20000);
-
