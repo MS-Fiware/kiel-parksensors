@@ -241,6 +241,41 @@ The following list gives a summary of currently supported variables and their de
         http://quantumleap:8668
       </td>
     </tr>
+    <tr>
+      <td>
+        <code>QL_V2_API_KEY</code>
+      </td>
+      <td>
+        <p>API key for authentication on QL</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>QL_V2_TENANT</code>
+      </td>
+      <td>
+        <p>tenant name on QL</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        kiel
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>QL_V2_SUBTENANT</code>
+      </td>
+      <td>
+        <p>sub-tenant name on QL</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+        /parkingspots
+      </td>
+    </tr>
   </tbody>
 </table>
 
