@@ -252,14 +252,14 @@ setTimeout(() => {
     }
 
     function getExistingParksensorIds_CB_NGSI_v2(baseUrl) {
-        let path = '/v2/entities?type=ParkingSpot&attrs=id&options=keyValues';
+        let path = '/v2/entities?type=ParkingSpot&attrs=id&options=keyValues,count&limit=1000';
         let headers = setHeaders_CB_NGSI_v2({'Accept': 'application/json'});
         return executeRestRequest('GET', baseUrl + path, headers, null);
     }
 
     function getExistingParksensorIds_CB_NGSI_LDv1(baseUrl) {
         // BUG?: trying to list all data entities limited to id attribute (attrs=id) returns an empty array, when providing another attribute (despite of 'type', e.g. attrs=id,name) a filled array is returned
-        let path = '/ngsi-ld/v1/entities?type=ParkingSpot&attrs=id,name&options=keyValues';
+        let path = '/ngsi-ld/v1/entities?type=ParkingSpot&attrs=id,name&options=keyValues,count&limit=1000';
         let headers = setHeaders_CB_NGSI_LDv1({'Accept': 'application/ld+json', 
                                                 'Link': '<https://schema.lab.fiware.org/ld/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
                                             });
