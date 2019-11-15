@@ -15,7 +15,7 @@ setTimeout(() => {
 
         // NGSI v2 context broker URL
         BROKER_V2_URL,
-	// Authorization key for authentication (NGSI-V2 context broker)
+	// Auth key for 'Authorization' header (NGSI-V2 context broker)
         BROKER_V2_AUTH_KEY,
         // API key for authentication (NGSI-V2 context broker)
         BROKER_V2_API_KEY,
@@ -28,7 +28,7 @@ setTimeout(() => {
 
         // NGSI-LD context broker URL
         BROKER_LD_URL,
-	// Authorization key for authentication (NGSI-LD context broker)
+	// Auth key for 'Authorization' header (NGSI-LD context broker)
         BROKER_LD_AUTH_KEY,
         // API key for authentication (NGSI-LD context broker)
         BROKER_LD_API_KEY,
@@ -43,7 +43,7 @@ setTimeout(() => {
         ENABLE_HISTORIC_DATA_STORAGE,
         // QuantumLeap notification URL used for sending status changes of entities in the context broker
         QL_V2_NOTIFICATION_URL,
-	// Authorization key for authentication (QuantumLeap)
+	// Auth key for 'Authorization' header (QuantumLeap)
         QL_V2_AUTH_KEY,
         // API key for authentication (QuantumLeap)
         QL_V2_API_KEY,
