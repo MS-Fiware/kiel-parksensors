@@ -103,6 +103,17 @@ The following list gives a summary of currently supported variables and their de
     </tr>
     <tr>
       <td>
+        <code>BROKER_V2_AUTH_KEY</code>
+      </td>
+      <td>
+        <p>Auth key for 'Authorization' header</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
+      </td>
+    </tr>
+    <tr>
+      <td>
         <code>BROKER_V2_API_KEY</code>
       </td>
       <td>
@@ -163,6 +174,17 @@ The following list gives a summary of currently supported variables and their de
       </td>
       <td>
         http://orion-ld:1026
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>BROKER_LD_AUTH_KEY</code>
+      </td>
+      <td>
+        <p>Auth key for 'Authorization' header</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
       </td>
     </tr>
     <tr>
@@ -239,6 +261,17 @@ The following list gives a summary of currently supported variables and their de
       </td>
       <td>
         http://quantumleap:8668
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>QL_V2_AUTH_KEY</code>
+      </td>
+      <td>
+        <p>Auth key for 'Authorization' header in requests to QL</p>
+        <p><i>optional</i></p>
+      </td>
+      <td>
       </td>
     </tr>
     <tr>
