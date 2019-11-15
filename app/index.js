@@ -15,6 +15,8 @@ setTimeout(() => {
 
         // NGSI v2 context broker URL
         BROKER_V2_URL,
+	// Authorization key for authentication (NGSI-V2 context broker)
+        BROKER_V2_AUTH_KEY,
         // API key for authentication (NGSI-V2 context broker)
         BROKER_V2_API_KEY,
         // tenant name on NGSI-V2 context broker (a tenant is a service aka domain on the context broker with its own isolated logical database)
@@ -26,6 +28,8 @@ setTimeout(() => {
 
         // NGSI-LD context broker URL
         BROKER_LD_URL,
+	// Authorization key for authentication (NGSI-LD context broker)
+        BROKER_LD_AUTH_KEY,
         // API key for authentication (NGSI-LD context broker)
         BROKER_LD_API_KEY,
         // tenant name on NGSI-LD context broker (a tenant is a service aka domain on the context broker with its own isolated logical database)
@@ -39,6 +43,8 @@ setTimeout(() => {
         ENABLE_HISTORIC_DATA_STORAGE,
         // QuantumLeap notification URL used for sending status changes of entities in the context broker
         QL_V2_NOTIFICATION_URL,
+	// Authorization key for authentication (QuantumLeap)
+        QL_V2_AUTH_KEY,
         // API key for authentication (QuantumLeap)
         QL_V2_API_KEY,
         // tenant name on QuantumLeap
@@ -201,7 +207,10 @@ setTimeout(() => {
     function setHeaders_CB_NGSI_v2(headers) {
         headers = headers || {};
 
-        // set additional headers
+	// set additional headers
+        if (BROKER_V2_AUTH_KEY) {
+            headers['Authorization'] = BROKER_V2_AUTH_KEY;
+        }
         if (BROKER_V2_API_KEY) {
             headers['X-Api-Key'] = BROKER_V2_API_KEY;
         }
@@ -219,7 +228,10 @@ setTimeout(() => {
     function setHeaders_CB_NGSI_LDv1(headers) {
         headers = headers || {};
 
-        // set additional headers
+	// set additional headers
+        if (BROKER_LD_AUTH_KEY) {
+            headers['Authorization'] = BROKER_LD_AUTH_KEY;
+        }
         if (BROKER_LD_API_KEY) {
             headers['X-Api-Key'] = BROKER_LD_API_KEY;
         }
@@ -237,14 +249,17 @@ setTimeout(() => {
     function setHeaders_QL_NGSI_v2(headers) {
         headers = headers || {};
 
-        // set additional headers
-        if (BROKER_V2_API_KEY) {
+	// set additional headers
+        if (QL_V2_AUTH_KEY) {
+            headers['Authorization'] = QL_V2_AUTH_KEY;
+        }
+        if (QL_V2_API_KEY) {
             headers['X-Api-Key'] = QL_V2_API_KEY;
         }
-        if (BROKER_V2_TENANT) {
+        if (QL_V2_TENANT) {
             headers['Fiware-Service'] = QL_V2_TENANT;
         }
-        if (BROKER_V2_SUBTENANT) {
+        if (QL_V2_SUBTENANT) {
             headers['Fiware-Servicepath'] = QL_V2_SUBTENANT;
         }
 
