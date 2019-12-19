@@ -215,7 +215,7 @@ setTimeout(() => {
 
 	// set additional headers
         if (BROKER_V2_AUTH_KEY) {
-            headers['Authorization'] = BROKER_V2_AUTH_KEY;
+            headers['Authorization'] = 'Bearer ' + BROKER_V2_AUTH_KEY;
         }
         if (BROKER_V2_API_KEY) {
             headers['X-Api-Key'] = BROKER_V2_API_KEY;
@@ -236,7 +236,7 @@ setTimeout(() => {
 
 	// set additional headers
         if (BROKER_LD_AUTH_KEY) {
-            headers['Authorization'] = BROKER_LD_AUTH_KEY;
+            headers['Authorization'] = 'Bearer ' + BROKER_LD_AUTH_KEY;
         }
         if (BROKER_LD_API_KEY) {
             headers['X-Api-Key'] = BROKER_LD_API_KEY;
@@ -257,7 +257,7 @@ setTimeout(() => {
 
 	// set additional headers
         if (QL_V2_AUTH_KEY) {
-            headers['Authorization'] = QL_V2_AUTH_KEY;
+            headers['Authorization'] = 'Bearer ' + QL_V2_AUTH_KEY;
         }
         if (QL_V2_API_KEY) {
             headers['X-Api-Key'] = QL_V2_API_KEY;
