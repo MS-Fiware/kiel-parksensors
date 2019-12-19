@@ -133,11 +133,14 @@ setTimeout(() => {
                 "value": sensor.name
             };
             transformedSensor['type'] = 'ParkingSpot';
+            transformedSensor['refParkingSite'] = {
+                "type": 'Relationship',
+                "value": 'stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '')
+            };
             transformedSensor['category'] = {
                 "type": 'Text',
                 "value": 'onstreet'
             };
-            //TODO: add 'refParkingSite' attribute (mandatory)
             transformedSensor['location'] = {
                 "type": 'geo:json',
                 "value": {
@@ -174,11 +177,14 @@ setTimeout(() => {
                 "value": sensor.name
             };
             transformedSensor['type'] = 'ParkingSpot';
+            transformedSensor['refParkingSite'] = {
+                "type": 'Relationship',
+                "object": 'urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_LD_ENTITY_ID_SUFFIX ? '-' + BROKER_LD_ENTITY_ID_SUFFIX : '')
+            };
             transformedSensor['category'] = {
                 "type": 'Property',
                 "value": 'onstreet'
             };
-            //TODO: add 'refParkingSite' attribute (mandatory)
             transformedSensor['location'] = {
                 "type": 'GeoProperty',
                 "value": {
@@ -266,10 +272,140 @@ setTimeout(() => {
         return headers;
     }
 
+    function getExistingParkingSiteId_CB_NGSI_v2(baseUrl) {
+        let path = '/v2/entities/stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '') + '?attrs=id';
+        let headers = setHeaders_CB_NGSI_v2({'Accept': 'application/json'});
+        return executeRestRequest('GET', baseUrl + path, headers, null);
+    }
+
+    function postRefParkingSite_CB_NGSI_v2(baseUrl) {
+        let path = '/v2/entities';
+        let headers = setHeaders_CB_NGSI_v2({'Content-Type': 'application/json'});
+        let body = {
+            "id": "OnStreetParking:stadt-kiel-parksensorik-kiellinie" + (BROKER_V2_ENTITY_ID_SUFFIX ? "-" + BROKER_V2_ENTITY_ID_SUFFIX : ""),
+            "type": "OnStreetParking",
+            "category": {
+                "type": "Array",
+                "value": ["free", "blueZone"]
+            },
+            "location": {
+                "type": "geo:json",
+                "value": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [10.156358, 54.341588], 
+                        [10.156430, 54.341615], 
+                        [10.156607, 54.341147], 
+                        [10.156543, 54.341110], 
+                        [10.156358, 54.341588]
+                    ]
+                }
+            },
+            "name": {
+                "type": "Text",
+                "value": "Kiel Kiellinie Sensor Parking"
+            },
+            "allowedVehicleType": {
+                "type": "Text",
+                "value": "car"
+            },
+            "requiredPermit": {
+                "type": "Array",
+                "value": ["noPermitNeeded", "blueZonePermit"]
+            },
+            "permitActiveHours": {
+                "type": "StructuredValue",
+                "value": {}
+            },
+            "chargeType": {
+                "type": "Array",
+                "value": ["free"]
+            },
+            "occupancyDetectionType": {
+                "type": "Array",
+                "value": ["singleSpaceDetection"]
+            },
+            "totalSpotNumber": {
+                "type": "Number",
+                "value": 17
+            }
+        };
+
+        return executeRestRequest('POST', baseUrl + path, headers, JSON.stringify(body));
+    }
+
     function getExistingParksensorIds_CB_NGSI_v2(baseUrl) {
         let path = '/v2/entities?type=ParkingSpot&attrs=id&options=keyValues,count&limit=1000';
         let headers = setHeaders_CB_NGSI_v2({'Accept': 'application/json'});
         return executeRestRequest('GET', baseUrl + path, headers, null);
+    }
+
+    function getExistingParkingSiteId_CB_NGSI_LDv1(baseUrl) {
+        let path = '/ngsi-ld/v1/entities/urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_LD_ENTITY_ID_SUFFIX ? '-' + BROKER_LD_ENTITY_ID_SUFFIX : '') + '?attrs=id';
+        let headers = setHeaders_CB_NGSI_LDv1({'Accept': 'application/ld+json', 
+                                                'Link': '<https://schema.lab.fiware.org/ld/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+                                            });
+        return executeRestRequest('GET', baseUrl + path, headers, null);
+    }
+
+    function postRefParkingSite_CB_NGSI_LDv1(baseUrl) {
+        let path = '/ngsi-ld/v1/entities';
+        let headers = setHeaders_CB_NGSI_LDv1({'Content-Type': 'application/ld+json'});
+        let body = {
+            "id": "urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie" + (BROKER_LD_ENTITY_ID_SUFFIX ? "-" + BROKER_LD_ENTITY_ID_SUFFIX : ""),
+            "type": "OnStreetParking",
+            "category": {
+                "type": "Property",
+                "value": ["free", "blueZone"]
+            },
+            "location": {
+                "type": "GeoProperty",
+                "value": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [10.156358, 54.341588], 
+                        [10.156430, 54.341615], 
+                        [10.156607, 54.341147], 
+                        [10.156543, 54.341110], 
+                        [10.156358, 54.341588]
+                    ]
+                }
+            },
+            "name": {
+                "type": "Property",
+                "value": "Kiel Kiellinie Sensor Parking"
+            },
+            "allowedVehicleType": {
+                "type": "Property",
+                "value": "car"
+            },
+            "requiredPermit": {
+                "type": "Property",
+                "value": ["noPermitNeeded", "blueZonePermit"]
+            },
+            "permitActiveHours": {
+                "type": "Property",
+                "value": {}
+            },
+            "chargeType": {
+                "type": "Property",
+                "value": ["free"]
+            },
+            "occupancyDetectionType": {
+                "type": "Property",
+                "value": ["singleSpaceDetection"]
+            },
+            "totalSpotNumber": {
+                "type": "Property",
+                "value": 17
+            },
+            "@context": [
+                "https://schema.lab.fiware.org/ld/context",
+                "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+            ]
+        };
+        
+        return executeRestRequest('POST', baseUrl + path, headers, JSON.stringify(body));
     }
 
     function getExistingParksensorIds_CB_NGSI_LDv1(baseUrl) {
@@ -422,6 +558,15 @@ setTimeout(() => {
                             subscribeParksensorsStatusChange_CB_NGSI_v2(brokerUrl);
                         }
                     }
+
+                    // check for existence of referenced entities in the context broker
+                    // referenced parking site:
+                    const refParkingSiteResponse = await getExistingParkingSiteId_CB_NGSI_v2(brokerUrl);
+                    if (!(refParkingSiteResponse && refParkingSiteResponse.data && refParkingSiteResponse.data.id)) {
+                        console.info('importParksensorsInto_CB_NGSI_v2 - INFO: could not query referenced parking site entity in NGSI v2 broker, trying to ADD NEW =>');
+
+                        postRefParkingSite_CB_NGSI_v2(brokerUrl);
+                    }
                 } else {
                     console.error('importParksensorsInto_CB_NGSI_v2 - ERROR: could not query existing park sensors in NGSI v2 broker');
                 }
@@ -477,6 +622,15 @@ setTimeout(() => {
                         console.info(JSON.stringify(sensorsToPost));
                         // add new park sensors objects to context broker
                         postParksensors_CB_NGSI_LDv1(brokerUrl, sensorsToPost);
+                    }
+
+                    // check for existence of referenced entities in the context broker
+                    // referenced parking site:
+                    const refParkingSiteResponse = await getExistingParkingSiteId_CB_NGSI_LDv1(brokerUrl);
+                    if (!(refParkingSiteResponse && refParkingSiteResponse.data && refParkingSiteResponse.data.id)) {
+                        console.info('importParksensorsInto_CB_NGSI_LDv1 - INFO: could not query referenced parking site entity in NGSI-LD broker, trying to ADD NEW =>');
+
+                        postRefParkingSite_CB_NGSI_LDv1(brokerUrl);
                     }
                 } else {
                     console.error('importParksensorsInto_CB_NGSI_LDv1 - ERROR: could not query existing park sensors in NGSI-LD broker');
