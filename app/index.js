@@ -293,12 +293,13 @@ setTimeout(() => {
                 "value": {
                     "type": "Polygon",
                     "coordinates": [
-                        [10.156358, 54.341588], 
-                        [10.156430, 54.341615], 
-                        [10.156607, 54.341147], 
-                        [10.156543, 54.341110], 
-                        [10.156358, 54.341588]
-                    ]
+						[
+							[10.156358, 54.341588], 
+							[10.156430, 54.341615], 
+							[10.156607, 54.341147], 
+							[10.156543, 54.341110], 
+							[10.156358, 54.341588]
+						]
                 }
             },
             "name": {
@@ -363,11 +364,13 @@ setTimeout(() => {
                 "value": {
                     "type": "Polygon",
                     "coordinates": [
-                        [10.156358, 54.341588], 
-                        [10.156430, 54.341615], 
-                        [10.156607, 54.341147], 
-                        [10.156543, 54.341110], 
-                        [10.156358, 54.341588]
+						[
+							[10.156358, 54.341588], 
+							[10.156430, 54.341615], 
+							[10.156607, 54.341147], 
+							[10.156543, 54.341110], 
+							[10.156358, 54.341588]
+						]
                     ]
                 }
             },
@@ -559,11 +562,16 @@ setTimeout(() => {
                         }
                     }
 
-                    // check for existence of referenced entities in the context broker
-                    // referenced parking site:
-                    const refParkingSiteResponse = await getExistingParkingSiteId_CB_NGSI_v2(brokerUrl);
+					let refParkingSiteResponse = null;
+					try {
+						// check for existence of referenced entities in the context broker
+						// referenced parking site:
+						refParkingSiteResponse = await getExistingParkingSiteId_CB_NGSI_v2(brokerUrl);
+					} catch(err) {
+						console.error('importParksensorsInto_CB_NGSI_v2 - ERROR: could not query referenced parking site entity in NGSI v2 broker');
+					}
                     if (!(refParkingSiteResponse && refParkingSiteResponse.data && refParkingSiteResponse.data.id)) {
-                        console.info('importParksensorsInto_CB_NGSI_v2 - INFO: could not query referenced parking site entity in NGSI v2 broker, trying to ADD NEW =>');
+                        console.info('importParksensorsInto_CB_NGSI_v2 - INFO: could not query referenced parking site entity in NGSI v2 broker, trying to ADD NEW...');
 
                         postRefParkingSite_CB_NGSI_v2(brokerUrl);
                     }
@@ -624,11 +632,16 @@ setTimeout(() => {
                         postParksensors_CB_NGSI_LDv1(brokerUrl, sensorsToPost);
                     }
 
-                    // check for existence of referenced entities in the context broker
-                    // referenced parking site:
-                    const refParkingSiteResponse = await getExistingParkingSiteId_CB_NGSI_LDv1(brokerUrl);
+					let refParkingSiteResponse = null;
+					try {
+						// check for existence of referenced entities in the context broker
+						// referenced parking site:
+						refParkingSiteResponse = await getExistingParkingSiteId_CB_NGSI_LDv1(brokerUrl);
+					} catch(err) {
+						console.error('importParksensorsInto_CB_NGSI_LDv1 - ERROR: could not query referenced parking site entity in NGSI-LD broker');
+					}
                     if (!(refParkingSiteResponse && refParkingSiteResponse.data && refParkingSiteResponse.data.id)) {
-                        console.info('importParksensorsInto_CB_NGSI_LDv1 - INFO: could not query referenced parking site entity in NGSI-LD broker, trying to ADD NEW =>');
+                        console.info('importParksensorsInto_CB_NGSI_LDv1 - INFO: could not query referenced parking site entity in NGSI-LD broker, trying to ADD NEW...');
 
                         postRefParkingSite_CB_NGSI_LDv1(brokerUrl);
                     }
