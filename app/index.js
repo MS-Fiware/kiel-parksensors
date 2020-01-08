@@ -273,7 +273,7 @@ setTimeout(() => {
     }
 
     function getExistingParkingSiteId_CB_NGSI_v2(baseUrl) {
-        let path = '/v2/entities/stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '') + '?attrs=id';
+        let path = '/v2/entities/OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '') + '?attrs=id';
         let headers = setHeaders_CB_NGSI_v2({'Accept': 'application/json'});
         return executeRestRequest('GET', baseUrl + path, headers, null);
     }
