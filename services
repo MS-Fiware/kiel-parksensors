@@ -49,8 +49,8 @@ case "${command}" in
 	"create")
 		echo "Obtaining Mongo DB v3.6 Image"
 		docker pull mongo:3.6
-                echo "Obtaining Orion v2.2.0 Image"
-                docker pull fiware/orion:2.2.0
+                echo "Obtaining Orion v2.3.0 Image"
+                docker pull fiware/orion:2.3.0
 		echo "Obtaining Latest Orion LD Image"
 		docker pull fiware/orion-ld
 		echo "Obtaining QuantumLeap v0.7.5 Image"
