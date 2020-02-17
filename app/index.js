@@ -135,7 +135,7 @@ setTimeout(() => {
             transformedSensor['type'] = 'ParkingSpot';
             transformedSensor['refParkingSite'] = {
                 "type": 'Relationship',
-                "value": 'stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '')
+                "value": 'OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '')
             };
             transformedSensor['category'] = {
                 "type": 'Text',
