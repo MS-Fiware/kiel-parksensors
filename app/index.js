@@ -127,7 +127,7 @@ setTimeout(() => {
         if (sensor) {
             let transformedSensor = {};
 
-            transformedSensor['id'] = 'ParkingSpot:' + sensor.slug + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '');
+            transformedSensor['id'] = 'ParkingSpot:' + sensor.slug + (BROKER_V2_ENTITY_ID_SUFFIX ? ':' + BROKER_V2_ENTITY_ID_SUFFIX : '');
             transformedSensor['name'] = {
                 "type": 'Text',
                 "value": sensor.name
@@ -135,7 +135,7 @@ setTimeout(() => {
             transformedSensor['type'] = 'ParkingSpot';
             transformedSensor['refParkingSite'] = {
                 "type": 'Relationship',
-                "value": 'OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '')
+                "value": 'OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? ':' + BROKER_V2_ENTITY_ID_SUFFIX : '')
             };
             transformedSensor['category'] = {
                 "type": 'Text',
@@ -171,7 +171,7 @@ setTimeout(() => {
         if (sensor) {
             let transformedSensor = {};
 
-            transformedSensor['id'] = 'urn:ngsi-ld:ParkingSpot:' + sensor.slug + (BROKER_LD_ENTITY_ID_SUFFIX ? '-' + BROKER_LD_ENTITY_ID_SUFFIX : '');
+            transformedSensor['id'] = 'urn:ngsi-ld:ParkingSpot:' + sensor.slug + (BROKER_LD_ENTITY_ID_SUFFIX ? ':' + BROKER_LD_ENTITY_ID_SUFFIX : '');
             transformedSensor['name'] = {
                 "type": 'Property',
                 "value": sensor.name
@@ -179,7 +179,7 @@ setTimeout(() => {
             transformedSensor['type'] = 'ParkingSpot';
             transformedSensor['refParkingSite'] = {
                 "type": 'Relationship',
-                "object": 'urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_LD_ENTITY_ID_SUFFIX ? '-' + BROKER_LD_ENTITY_ID_SUFFIX : '')
+                "object": 'urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_LD_ENTITY_ID_SUFFIX ? ':' + BROKER_LD_ENTITY_ID_SUFFIX : '')
             };
             transformedSensor['category'] = {
                 "type": 'Property',
@@ -273,7 +273,7 @@ setTimeout(() => {
     }
 
     function getExistingParkingSiteId_CB_NGSI_v2(baseUrl) {
-        let path = '/v2/entities/OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? '-' + BROKER_V2_ENTITY_ID_SUFFIX : '') + '?attrs=id';
+        let path = '/v2/entities/OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_V2_ENTITY_ID_SUFFIX ? ':' + BROKER_V2_ENTITY_ID_SUFFIX : '') + '?attrs=id';
         let headers = setHeaders_CB_NGSI_v2({'Accept': 'application/json'});
         return executeRestRequest('GET', baseUrl + path, headers, null);
     }
@@ -343,7 +343,7 @@ setTimeout(() => {
     }
 
     function getExistingParkingSiteId_CB_NGSI_LDv1(baseUrl) {
-        let path = '/ngsi-ld/v1/entities/urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_LD_ENTITY_ID_SUFFIX ? '-' + BROKER_LD_ENTITY_ID_SUFFIX : '') + '?attrs=id';
+        let path = '/ngsi-ld/v1/entities/urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie' + (BROKER_LD_ENTITY_ID_SUFFIX ? ':' + BROKER_LD_ENTITY_ID_SUFFIX : '') + '?attrs=id';
         let headers = setHeaders_CB_NGSI_LDv1({'Accept': 'application/ld+json', 
                                                 'Link': '<https://schema.lab.fiware.org/ld/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
                                             });
