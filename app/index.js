@@ -282,7 +282,7 @@ setTimeout(() => {
         let path = '/v2/entities';
         let headers = setHeaders_CB_NGSI_v2({'Content-Type': 'application/json'});
         let body = {
-            "id": "OnStreetParking:stadt-kiel-parksensorik-kiellinie" + (BROKER_V2_ENTITY_ID_SUFFIX ? "-" + BROKER_V2_ENTITY_ID_SUFFIX : ""),
+            "id": "OnStreetParking:stadt-kiel-parksensorik-kiellinie" + (BROKER_V2_ENTITY_ID_SUFFIX ? ":" + BROKER_V2_ENTITY_ID_SUFFIX : ""),
             "type": "OnStreetParking",
             "category": {
                 "type": "Array",
@@ -354,7 +354,7 @@ setTimeout(() => {
         let path = '/ngsi-ld/v1/entities';
         let headers = setHeaders_CB_NGSI_LDv1({'Content-Type': 'application/ld+json'});
         let body = {
-            "id": "urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie" + (BROKER_LD_ENTITY_ID_SUFFIX ? "-" + BROKER_LD_ENTITY_ID_SUFFIX : ""),
+            "id": "urn:ngsi-ld:OnStreetParking:stadt-kiel-parksensorik-kiellinie" + (BROKER_LD_ENTITY_ID_SUFFIX ? ":" + BROKER_LD_ENTITY_ID_SUFFIX : ""),
             "type": "OnStreetParking",
             "category": {
                 "type": "Property",
@@ -449,7 +449,7 @@ setTimeout(() => {
         subscription['subject'] = {
             "entities": [
                 {
-                    "idPattern": 'ParkingSpot' + (BROKER_V2_ENTITY_ID_SUFFIX ? '.*-' + BROKER_V2_ENTITY_ID_SUFFIX.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '.*'),
+                    "idPattern": 'ParkingSpot' + (BROKER_V2_ENTITY_ID_SUFFIX ? '.*:' + BROKER_V2_ENTITY_ID_SUFFIX.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '.*'),
                     "type": 'ParkingSpot'
                 }
             ],
