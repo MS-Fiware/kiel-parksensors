@@ -9,6 +9,8 @@ Node.js script that periodically queries states of parking spots on "Kiellinie" 
 
 The Node.js script and the context brokers run in separated Docker containers which in turn are composed within the included Docker Compose files.
 
+<b>Important note:</b> Unfortunately, the API key provided for querying the parking sensor data has been invalid since the end of June 2020 (as of 13 August 2020). You may be lucky and get a new one from the data provider [Stadtwerke Kiel](https://www.stadtwerke-kiel.de/swk/de/).
+
 ## Content
 
 -   [Prerequisites](#prerequisites)
