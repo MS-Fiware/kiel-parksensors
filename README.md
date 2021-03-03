@@ -1,8 +1,8 @@
 # kiel-parksensors
 
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
-[![SOF support badge](https://nexus.lab.fiware.org/repository/raw/public/badges/stackoverflow/orion.svg)](http://stackoverflow.com/questions/tagged/fiware-orion)
-[![NGSI v2](https://nexus.lab.fiware.org/repository/raw/public/badges/specifications/ngsiv2.svg)](http://fiware-ges.github.io/orion/api/v2/stable/)
+[![Support badge]( https://img.shields.io/badge/support-sof-yellowgreen.svg)](http://stackoverflow.com/questions/tagged/fiware-orion)
+[![NGSI v2](https://img.shields.io/badge/NGSI-V2-red.svg)](http://fiware-ges.github.io/orion/api/v2/stable/)
 [![NGSI-LD badge](https://img.shields.io/badge/NGSI-LD-red.svg)](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.02.01_60/gs_cim009v010201p.pdf)
 
 Node.js script that periodically queries states of parking spots on "Kiellinie" in Kiel and imports transformed data both into [FIWARE Orion v2](https://github.com/telefonicaid/fiware-orion) and [FIWARE Orion-LD](https://github.com/FIWARE/context.Orion-LD) context broker. Optional storage of NGSI v2 time series data in a [CrateDB](https://crate.io/) via [QuantumLeap API](https://github.com/smartsdk/ngsi-timeseries-api) is also supported.  
